@@ -7,7 +7,7 @@ import glob
 import os
 from datetime import datetime
 
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 import luneth_engine as le
 import pygame
@@ -128,6 +128,7 @@ class BaseGame:
     def run(self):
         self.running = True
         try:
+            self.state.startup()
             while self.running and self.state:
                 self.dt = self.clock.tick(self.ss.get("fps", 60)) / 1000.0  # seconds
                 self.tm.update(self.dt)

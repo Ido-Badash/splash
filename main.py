@@ -1,9 +1,13 @@
-from game import BaseGame, logger, build_states
+from game.core import BaseGame, logger
+from game.states import Menu, Night1
 
 def main():
     game = BaseGame()
-    states = build_states()
+    states = [
+        Night1(), Menu()
+    ]
     for s in states:
+        s.game = game
         game.add_state(s)
     game.run()
 

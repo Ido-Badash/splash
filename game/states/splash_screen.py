@@ -13,7 +13,10 @@ class SplashScreen(BaseState):
     def startup(self):
         pygame.display.set_caption("Splash Screen")
 
-    def get_event(self, event):
+    def cleanup(self):
+        pass
+
+    def get_event(self, event: pygame.event.Event):
         pass
 
     def draw(self, screen: pygame.Surface):
@@ -33,6 +36,11 @@ class SplashScreen(BaseState):
 
         # clamp text alpha
         self.text_alpha = max(0, min(255, int(self.text_alpha)))
+
+        # if animation ended go to menu
+        if self.text_alpha <= 0:
+            self.next = States.MENU
+            self.done = True
 
     def _text_pos(self, rect: pygame.Rect):
         return (

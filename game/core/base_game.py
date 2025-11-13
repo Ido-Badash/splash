@@ -23,7 +23,6 @@ class BaseGame:
 
     def __init__(
         self,
-        states: Optional[List[le.State]] = None,
     ):
         # le systems
         self.data_folder = Path("data")
@@ -61,12 +60,12 @@ class BaseGame:
                 lambda events: TriggerHandler.trigger_single_key(
                     events, pygame.K_RIGHT
                 ),
-                self.create_state_change(self.sm.next_state),
+                self.sm.next_state,
             )
             self.gi.add_action(
                 "admin_switch_left",
                 lambda events: TriggerHandler.trigger_single_key(events, pygame.K_LEFT),
-                self.create_state_change(self.sm.previous_state),
+                self.sm.previous_state,
             )
 
         # screenshots
@@ -75,34 +74,14 @@ class BaseGame:
         # font
         self.font = pygame.freetype.Font(self.ss.get("game_font_path"))
 
-        # add game to every state if states were provided
-        if states:
-            for s in self.sm.states:
-                self.add_state(s)
+        # add game to every state
+        for s in self.sm.states:
+            self.add_state(s)
 
     # --- states helper functions ---
     def add_state(self, state: le.State):
         state.game = self
         self.sm.add(state)
-
-    def create_state_change(self, func):
-        """
-        Wraps a function with the same logic as @state_changed,
-
-        but the parant method takes self.
-
-        Mostly used for GlobalInputs to add actions
-        """
-
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            self.state.cleanup()
-            self.state.done = True
-            res = func(*args, **kwargs)
-            self.state.startup()
-            return res
-
-        return wrapper
 
     @state_changed
     def set_state_by_name(self, name: str):
@@ -186,7 +165,9 @@ class BaseGame:
     def run(self):
         self.running = True
         try:
-            self.state.startup()
+            if self.state:
+                self.state.startup()
+
             while self.running and self.state:
                 self._dt = self.clock.tick(self.ss.get("fps", 60)) / 1000.0  # seconds
                 self.tm.update(self._dt)

@@ -12,6 +12,9 @@ class Menu(BaseState):
     def startup(self):
         pygame.display.set_caption("Menu")
 
+    def cleanup(self):
+        pass
+
     def get_event(self, event: pygame.event.Event):
         pass
 

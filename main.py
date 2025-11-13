@@ -9,7 +9,7 @@ from game.states import (
 
 
 def main():
-    logger.info("=== Spin of Light - Starting ===")
+    logger.info("=== Game - Starting ===")
 
     # create game
     game = BaseGame()
@@ -35,7 +35,7 @@ def main():
     except Exception as e:
         logger.exception(f"Fatal error: {e}")
     finally:
-        logger.info("=== Spin of Light - Ended ===")
+        logger.info("=== Game - Ended ===")
 
 
 if __name__ == "__main__":

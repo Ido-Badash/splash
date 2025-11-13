@@ -14,7 +14,6 @@ import pygame
 import pygame.freetype
 
 from winmode import PygameWindowController, WindowStates
-from luneth_engine import state_changed
 from .logger import logger
 from .trigger_handler import TriggerHandler
 
@@ -83,7 +82,7 @@ class BaseGame:
         state.game = self
         self.sm.add(state)
 
-    @state_changed
+    @le.state_changed
     def set_state_by_name(self, name: str):
         idx = self.sm.find_state_by_name(name)
         self.state.next = name
@@ -171,7 +170,7 @@ class BaseGame:
             while self.running and self.state:
                 self._dt = self.clock.tick(self.ss.get("fps", 60)) / 1000.0  # seconds
                 self.tm.update(self._dt)
-                print(self.tm.elapsed_time)
+
                 # get events
                 events = pygame.event.get()
 
@@ -188,10 +187,6 @@ class BaseGame:
                 # update + draw
                 self.state.update(self.screen, self.tm.dt)
                 self.state.draw(self.screen)
-
-                # find and switch to the named state
-                if self.state.done:
-                    self.sm.default_switcher()
 
                 # update display
                 pygame.display.flip()

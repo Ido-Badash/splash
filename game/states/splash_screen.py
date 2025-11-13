@@ -6,12 +6,15 @@ from .states import States
 class SplashScreen(BaseState):
     def __init__(self, game=None):
         super().__init__(States.SPLASH_SCREEN, game)
-        self.base_font_ratio = 7
+        self.base_font_ratio = 4
         self.text_alpha = 255
-        self.fade_speed = self.game.ss.get("splash_screen_text_fade_speed", 75)
+        self.fade_speed = 50
+        self.sizing_speed = 1
 
     def startup(self):
-        pygame.display.set_caption("Splash Screen")
+        pygame.display.set_caption("Splash")
+        self.base_font_ratio = 4
+        self.text_alpha = 255
 
     def cleanup(self):
         pass
@@ -34,13 +37,15 @@ class SplashScreen(BaseState):
         # decrease alpha relative to dt
         self.text_alpha -= self.fade_speed * dt
 
+        # decrease size relative to dt
+        self.base_font_ratio += self.sizing_speed * dt
+
         # clamp text alpha
         self.text_alpha = max(0, min(255, int(self.text_alpha)))
 
         # if animation ended go to menu
         if self.text_alpha <= 0:
-            self.next = States.MENU
-            self.done = True
+            self.game.set_state_by_name(States.MENU)
 
     def _text_pos(self, rect: pygame.Rect):
         return (

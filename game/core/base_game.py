@@ -18,9 +18,9 @@ from game.utils.systems_utils import fullscreen_toggle
 
 class BaseGame:
 
-    def __init__(
-        self,
-    ):
+    def __init__(self, open_win_in: WindowStates = WindowStates.WINDOWED):
+        self.open_win_in = open_win_in
+
         # le systems
         self.data_folder = Path("data")
         self.settings_path = self.data_folder / "settings.json"
@@ -40,7 +40,7 @@ class BaseGame:
         # winmode controller
         self.wc = PygameWindowController(
             (self.ss.get("screen_w", 640), self.ss.get("screen_h", 480)),
-            WindowStates.WINDOWED,
+            self.open_win_in,
         )
 
         # create global inputs

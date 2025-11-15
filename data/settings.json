@@ -3,6 +3,5 @@
     "screen_w": 800,
     "screen_h": 450,
     "game_font_path": "assets/fonts/game_font.ttf",
-    "admin_state_switch": true,
-    "splash_screen_text": "Luneth Studio"
+    "admin_state_switch": true
 }

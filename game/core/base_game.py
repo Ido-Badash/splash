@@ -18,8 +18,12 @@ from game.utils.systems_utils import fullscreen_toggle
 
 class BaseGame:
 
-    def __init__(self, open_win_in: WindowStates = WindowStates.WINDOWED):
-        self.open_win_in = open_win_in
+    def __init__(
+        self,
+        win_state: WindowStates = WindowStates.WINDOWED_STATELESS,
+        open_in_fullscreen: bool = False,
+    ):
+        self.win_state = win_state
 
         # le systems
         self.data_folder = Path("data")
@@ -40,7 +44,7 @@ class BaseGame:
         # winmode controller
         self.wc = PygameWindowController(
             (self.ss.get("screen_w", 640), self.ss.get("screen_h", 480)),
-            self.open_win_in,
+            WindowStates.FULLSCREEN if open_in_fullscreen else self.win_state,
         )
 
         # create global inputs
@@ -93,7 +97,10 @@ class BaseGame:
         logger.debug("Quit triggered")
 
     def toggle_fullscreen(self):
-        fullscreen_toggle(self.wc)
+        if self.wc.is_current_fullscreen_mode():
+            self.wc.set_mode(self.win_state)
+        else:
+            self.wc.set_mode(WindowStates.FULLSCREEN)
         logger.debug("Fullscreen toggled")
 
     def take_screenshot(self):

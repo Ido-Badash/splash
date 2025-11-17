@@ -1,13 +1,14 @@
 import pygame
 
+
 from game.core import BaseState, logger
 from game.ui import FadeTransition, Colors
 from .states import States
 
 
-class Menu(BaseState):
+class LifeCapsule(BaseState):
     def __init__(self, game=None):
-        super().__init__(States.MENU, game)
+        super().__init__(States.LIFE_CAPSULE, game)
         self.fade_transition = FadeTransition(
             size=(self.game.width, self.game.height),
             starting_alpha=255,
@@ -15,7 +16,7 @@ class Menu(BaseState):
         )
 
     def startup(self):
-        pygame.display.set_caption("Menu")
+        pygame.display.set_caption(self.name.value)
         self.fade_transition.startup()
 
     def cleanup(self):

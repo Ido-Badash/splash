@@ -1,2 +1,1 @@
-from .entities import Entities
-from .player import Player
+from .rocket import Rocket

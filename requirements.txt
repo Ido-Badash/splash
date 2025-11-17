@@ -1,3 +1,4 @@
 ../luneth_engine
 ../winmode
 pygame
+gif_pygame

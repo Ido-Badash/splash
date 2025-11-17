@@ -1,8 +1,8 @@
-from game.core import BaseState, logger, Colors
+from game.core import BaseState, logger
 import pygame
 from .states import States
 from game.utils import clamp_alpha, mid_pos
-from game.ui import FadeTransition
+from game.ui import FadeTransition, Colors
 
 
 class SplashScreen(BaseState):

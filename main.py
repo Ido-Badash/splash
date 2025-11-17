@@ -3,8 +3,12 @@ from game.states import (
     States,
     Menu,
     SplashScreen,
-    # PauseMenu,
     # Credits,
+    LaunchTower,
+    OrbitControl,
+    AstroLink,
+    LifeCapsule,
+    SoftLanding,
 )
 import logging
 
@@ -22,8 +26,12 @@ def main():
     states = [
         SplashScreen(game),
         Menu(game),
-        # PauseMenu(game),
         # Credits(game),
+        LaunchTower(game),
+        OrbitControl(game),
+        AstroLink(game),
+        LifeCapsule(game),
+        SoftLanding(game),
     ]
 
     # add to game all states

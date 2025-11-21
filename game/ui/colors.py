@@ -34,8 +34,4 @@ class Colors:
         ORANGE,
         YELLOW,
         GOLD,
-        HOT_PINK,
-        PINK,
-        MAGENTA,
-        PURPLE,
     ]

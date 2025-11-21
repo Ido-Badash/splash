@@ -4,7 +4,6 @@ from game.core import BaseState
 from game.ui import FadeTransition, Colors
 from .states import States
 from game.entities import Rocket
-from game.utils import mid_pos
 from game.widgets import TextLine, MultiLine
 import random
 
@@ -54,66 +53,37 @@ class LaunchTower(BaseState):
         # --- rockets ---
         r_size_ratio = (0.08, 0.20)
 
-        self.rocket_1 = Rocket(
-            size_ratio=r_size_ratio,
-            x_ratio=0.20,
-            speed=200,
-            shake_strength=1,
-            height_reach=200,
-            image_path="assets/images/rocket.png",
-        )
-
-        self.rocket_2 = Rocket(
-            size_ratio=r_size_ratio,
-            x_ratio=0.50,
-            speed=350,
-            shake_strength=2,
-            image_path="assets/images/rocket.png",
-        )
-
-        self.rocket_3 = Rocket(
-            size_ratio=r_size_ratio,
-            x_ratio=0.80,
-            speed=500,
-            shake_strength=3,
-            image_path="assets/images/rocket.png",
-        )
+        # TODO: CREATE ROCKETS
 
     def startup(self):
         pygame.display.set_caption(self.name.value)
         self.fade_transition.startup()
 
-        for r in self.rockets:
-            r.startup()
-
     def cleanup(self):
         pass
 
     def get_event(self, event):
-        for r in self.rockets:
-            r.get_event(event)
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if r.rocket_rect.collidepoint(event.pos):
-                    self.select_rocket(r)
+        # TODO: get event for each rocket
 
-    def select_rocket(self, rocket: Rocket):
-        self.current_rocket = rocket
-        rocket.shake_time = 1.0  # seconds
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pass
+            # TODO:  for r in self.rockets:
+            # TODO:      if r.rocket_rect.collidepoint(event.pos):
+            # TODO:          # launch only if there no current active rocket
 
     def draw(self, screen: pygame.Surface):
-        # rocket shake
+        # rocket shake based on current rocket
         shake_x, shake_y = self.get_screen_shake_offset()
 
         # background
-        screen.blit(self.bg_gif_surf, (shake_x, shake_y))
-        self.bg_gif._animate()
+        if self.bg_gif_surf:
+            screen.blit(self.bg_gif_surf, (shake_x, shake_y))
+            self.bg_gif._animate()
 
         # text block
         self.text_block.draw(screen)
 
-        # rockets
-        for r in self.rockets:
-            screen.blit(r.rocket, r.rocket_rect)
+        # TODO: draw rockets
 
         # fade
         self.fade_transition.draw(screen)
@@ -126,21 +96,25 @@ class LaunchTower(BaseState):
         # update text layout on resize
         self.text_block.update(self.game.size)
 
-        # rockets update
-        for r in self.rockets:
-            r.update(screen, dt)
+        # TODO: update rockets
+
+        # TODO: if current rocket finished, clear current
+
+        # TODO: if all rocket are done, start finish animation
 
         # fade
         self.fade_transition.set_size(self.game.size)
         self.fade_transition.update(dt)
 
+    def finish_animation(self):
+        pass
+
     def get_screen_shake_offset(self):
-        if self.current_rocket and self.current_rocket.shake_timer > 0:
-            s = int(self.current_rocket.shake_strength)
-            print(self.current_rocket.shake_timer)
-            return (random.randint(-s, s), random.randint(-s, s))
+        # TODO: if current rocket shake timer > 0:
+        # TODO:    s = int(self.current_rocket.shake_strength)
+        # TODO:    return (random.randint(-s, s), random.randint(-s, s))
         return (0, 0)
 
     @property
     def rockets(self):
-        return [self.rocket_1, self.rocket_2, self.rocket_3]
+        return []  # returns all rockets

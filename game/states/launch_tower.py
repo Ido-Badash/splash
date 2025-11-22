@@ -11,7 +11,6 @@ from game.widgets import TextLine, MultiLine, Button
 class LaunchTower(BaseState):
     def __init__(self, game=None):
         super().__init__(States.LAUNCH_TOWER, game)
-
         self.current_rocket = None  # track the current active rocket
 
         self.fade_transition = FadeTransition(
@@ -82,12 +81,12 @@ class LaunchTower(BaseState):
         ]
 
         for r in self.rockets:
-            r.dying_sound = pygame.Sound(self.game.ss.lget("rocket_dying_path"))
-            r.flying_sound = pygame.Sound(self.game.ss.lget("rocket_flying_path"))
-            # r.falling_sound = pygame.Sound(self.game.ss.lget("rocket_falling_path"))
+            r.dying_sound = pygame.Sound(self.game.ss.get("rocket_dying_path"))
+            r.flying_sound = pygame.Sound(self.game.ss.get("rocket_flying_path"))
+            # r.falling_sound = pygame.Sound(self.game.ss.get("rocket_falling_path"))
 
         # win sound
-        self.game.sound_manager.load_sound("win", self.game.ss.lget("win_path"))
+        self.game.sound_manager.load_sound("win", self.game.ss.get("win_path"))
 
         # track clicks
         self.clicks_count = 0
@@ -107,7 +106,7 @@ class LaunchTower(BaseState):
             hover_font_color=Colors.DARK_GREEN,
             clicked_color=Colors.DARK_GREEN,
             clicked_font_color=Colors.PLATINUM,
-            click_sound=pygame.Sound(self.game.ss.lget("button_click_path")),
+            click_sound=pygame.Sound(self.game.ss.get("button_click_path")),
             size_ratio=(0.15, 0.06),  # 15% width, 6% height of screen
             screen_size=self.game.screen.get_size(),
             border_radius=12,

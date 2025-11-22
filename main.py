@@ -11,6 +11,7 @@ from game.states import (
     SoftLanding,
 )
 import logging
+from winmode import WindowStates
 
 
 def main():
@@ -20,7 +21,9 @@ def main():
     logger.info("=== Game - Starting ===")
 
     # create game
-    game = BaseGame()
+    game = BaseGame(
+        win_state=WindowStates.FULLSCREEN, open_in_fullscreen=True, run_as_admin=True
+    )
 
     # defines states
     states = [

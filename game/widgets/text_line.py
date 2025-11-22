@@ -5,6 +5,7 @@ class TextLine:
     def __init__(
         self,
         text: str,
+        font: pygame.font.Font,
         base_ratio: float,
         color: tuple,
         game_size: tuple,
@@ -14,6 +15,7 @@ class TextLine:
         center_x=True,
     ):
         self.text = text
+        self.font = font
         self.base_ratio = base_ratio
         self.color = color
         self.padding = padding
@@ -22,7 +24,6 @@ class TextLine:
         self.y_ratio = y_ratio
         self.center_x = center_x
 
-        self.font = None
         self.surf = None
         self.rect = None
         self.pos = (0, 0)
@@ -35,9 +36,8 @@ class TextLine:
 
         # dynamic font size
         font_size = int(self.game_size[1] / self.base_ratio)
-        self.font = pygame.font.Font(None, font_size)
-
-        self.surf = self.font.render(self.text, True, self.color)
+        self.font.size = font_size
+        self.surf, _ = self.font.render(self.text, self.color)
         self.rect = self.surf.get_rect()
 
         # --- padding ---

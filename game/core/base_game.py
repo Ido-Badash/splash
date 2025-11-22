@@ -2,7 +2,7 @@ from pathlib import Path
 import glob
 import os
 from datetime import datetime
-from typing import Tuple
+from typing import Tuple, Dict
 
 import luneth_engine as le
 from winmode import PygameWindowController, WindowStates
@@ -20,10 +20,12 @@ class BaseGame:
 
     def __init__(
         self,
-        win_state: WindowStates = WindowStates.WINDOWED_STATELESS,
-        open_in_fullscreen: bool = False,
+        win_state: WindowStates = WindowStates.FULLSCREEN,
+        open_in_fullscreen: bool = True,
+        run_as_admin: bool = False,
     ):
         self.win_state = win_state
+        self.run_as_admin = run_as_admin
 
         # le systems
         self.data_folder = Path("data")
@@ -48,17 +50,48 @@ class BaseGame:
         )
 
         # create global inputs
-        self.gi.add_action(
-            "fullscreen",
-            lambda events: TriggerHandler.trigger_single_key(events, pygame.K_F11),
-            self.toggle_fullscreen,
-        )
-        self.gi.add_action(
-            "screenshot",
-            lambda events: TriggerHandler.trigger_single_key(events, pygame.K_F2),
-            self.take_screenshot,
-        )
-        if self.ss.get("admin_state_switch", False):
+        self.create_global_inputs()
+
+        # screenshots
+        self.screenshots_folder = Path("screenshots")
+
+        # font
+
+        self.font = pygame.freetype.Font(self.ss.get("game_font_path"))
+
+        # add game to every state
+        for s in self.sm.states:
+            self.add_state(s)
+
+    # --- create global inputs ---
+    def create_global_inputs(self):
+        if self.ss.get("can_fullscreen"):
+            self.gi.add_action(
+                "fullscreen",
+                lambda events: TriggerHandler.trigger_single_key(events, pygame.K_F11),
+                self.toggle_fullscreen,
+            )
+        if self.ss.get("can_take_screenshots"):
+            self.gi.add_action(
+                "screenshot",
+                lambda events: TriggerHandler.trigger_single_key(events, pygame.K_F2),
+                self.take_screenshot,
+            )
+        if self.ss.get("can_exit_via_escape"):
+            self.gi.add_action(
+                "exit",
+                lambda events: TriggerHandler.trigger_single_key(
+                    events, pygame.K_ESCAPE
+                ),
+                self.quit_game,
+            )
+        if self.run_as_admin:
+
+            self.gi.add_action(
+                "refresh_state",
+                lambda events: TriggerHandler.trigger_single_key(events, pygame.K_F3),
+                lambda: self.state.startup() if self.state else None,
+            )
             self.gi.add_action(
                 "admin_switch_right",
                 lambda events: TriggerHandler.trigger_single_key(
@@ -71,16 +104,6 @@ class BaseGame:
                 lambda events: TriggerHandler.trigger_single_key(events, pygame.K_LEFT),
                 self.sm.previous_state,
             )
-
-        # screenshots
-        self.screenshots_folder = Path("screenshots")
-
-        # font
-        self.font = pygame.freetype.Font(self.ss.get("game_font_path"))
-
-        # add game to every state
-        for s in self.sm.states:
-            self.add_state(s)
 
     # --- states helper functions ---
     def add_state(self, state: le.State):
@@ -97,11 +120,14 @@ class BaseGame:
         logger.debug("Quit triggered")
 
     def toggle_fullscreen(self):
+        if self.win_state == WindowStates.FULLSCREEN:
+            return
         if self.wc.is_current_fullscreen_mode():
             self.wc.set_mode(self.win_state)
+            logger.debug("Fullscreen toggled off")
         else:
             self.wc.set_mode(WindowStates.FULLSCREEN)
-        logger.debug("Fullscreen toggled")
+            logger.debug("Fullscreen toggled on")
 
     def take_screenshot(self):
         # make sure screenshots folder exists
@@ -140,35 +166,49 @@ class BaseGame:
     # --- properties ---
     @property
     def screen(self) -> pygame.Surface:
+        "Returns screen."
         return self.wc.get_screen()
 
     @property
     def size(self) -> Tuple[int, int]:
+        "Returns screen size."
         return self.screen.get_size()
 
     @property
     def width(self) -> int:
+        "Returns screen width."
         return self.screen.get_width()
 
     @property
     def height(self) -> int:
+        "Returns screen height."
         return self.screen.get_height()
 
     @property
     def state(self):
+        """Returns current state."""
         return self.sm.state
 
     @property
     def states(self):
+        "Returns all states."
         return self.sm.states
 
     @property
     def time_since_last_state(self):
+        "Returns time (in seconds) since last state change."
         return self.last_state_tm.elapsed_time
 
     # --- util methods ---
     def size_depended(self, base_ratio: float):
         return min(self.width, self.height) / base_ratio
+
+    # --- get event ---
+    def get_event(self, event: pygame.event.Event):
+        if event.type == pygame.QUIT:
+            self.running = False
+        else:
+            self.state.get_event(event)
 
     # --- run ---
     def run(self):
@@ -191,10 +231,7 @@ class BaseGame:
 
                 # event handle
                 for event in events:
-                    if event.type == pygame.QUIT:
-                        self.running = False
-                    else:
-                        self.state.get_event(event)
+                    self.get_event(event)
 
                 # update + draw
                 self.state.update(self.screen, self.tm.dt)

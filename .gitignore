@@ -77,3 +77,4 @@ venv.bak/
 
 # Windows
 Thumbs.db
+.aider*

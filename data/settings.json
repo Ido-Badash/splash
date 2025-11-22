@@ -5,5 +5,10 @@
     "game_font_path": "assets/fonts/game_font.ttf",
     "launch_tower_bg_gif_path": "assets/gifs/launch_tower_bg.gif",
     "rocket_image_path": "assets/images/rocket.png",
-    "admin_state_switch": true
+    "button_click_path": "assets/sound/sfx/button_click.mp3",
+    "rocket_dying": "assets/sound/sfx/rocket_dying.mp3",
+    "rocket_flying": "assets/sound/sfx/rocket_flying.mp3",
+    "can_take_screenshots": true,
+    "can_fullscreen": true,
+    "can_exit_via_escape": true
 }

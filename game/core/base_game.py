@@ -2,7 +2,7 @@ from pathlib import Path
 import glob
 import os
 from datetime import datetime
-from typing import Tuple, Dict
+from typing import Tuple
 
 import luneth_engine as le
 from winmode import PygameWindowController, WindowStates
@@ -13,6 +13,7 @@ import pygame.freetype
 
 from .logger import logger
 from .trigger_handler import TriggerHandler
+from .sound_manager import SoundManager
 from game.utils.systems_utils import fullscreen_toggle
 
 
@@ -20,12 +21,12 @@ class BaseGame:
 
     def __init__(
         self,
-        win_state: WindowStates = WindowStates.FULLSCREEN,
-        open_in_fullscreen: bool = True,
-        run_as_admin: bool = False,
+        win_state: WindowStates = WindowStates.WINDOWED_STATELESS,
+        open_in_fullscreen: bool = False,
+        admin: bool = False,
     ):
         self.win_state = win_state
-        self.run_as_admin = run_as_admin
+        self.admin = admin
 
         # le systems
         self.data_folder = Path("data")
@@ -35,6 +36,9 @@ class BaseGame:
         self.sm = le.StateManager(on_state_change=self.on_state_change)
         self.tm = le.TimeManager()
         self.gi = le.GlobalInputs()
+
+        # Sound manager
+        self.sound_manager = SoundManager()
 
         # init pygame
         pygame.init()
@@ -49,49 +53,36 @@ class BaseGame:
             WindowStates.FULLSCREEN if open_in_fullscreen else self.win_state,
         )
 
-        # create global inputs
-        self.create_global_inputs()
+        # --- Global Inputs with flags from settings.json ---
 
-        # screenshots
-        self.screenshots_folder = Path("screenshots")
-
-        # font
-
-        self.font = pygame.freetype.Font(self.ss.get("game_font_path"))
-
-        # add game to every state
-        for s in self.sm.states:
-            self.add_state(s)
-
-    # --- create global inputs ---
-    def create_global_inputs(self):
-        if self.ss.get("can_fullscreen"):
+        # Fullscreen toggle (F11)
+        if self.ss.get("can_fullscreen", True):
             self.gi.add_action(
                 "fullscreen",
                 lambda events: TriggerHandler.trigger_single_key(events, pygame.K_F11),
                 self.toggle_fullscreen,
             )
-        if self.ss.get("can_take_screenshots"):
+
+        # Screenshot (F2)
+        if self.ss.get("can_take_screenshots", True):
             self.gi.add_action(
                 "screenshot",
                 lambda events: TriggerHandler.trigger_single_key(events, pygame.K_F2),
                 self.take_screenshot,
             )
-        if self.ss.get("can_exit_via_escape"):
+
+        # Exit via Escape
+        if self.ss.get("can_exit_via_escape", True):
             self.gi.add_action(
-                "exit",
+                "escape_quit",
                 lambda events: TriggerHandler.trigger_single_key(
                     events, pygame.K_ESCAPE
                 ),
                 self.quit_game,
             )
-        if self.run_as_admin:
 
-            self.gi.add_action(
-                "refresh_state",
-                lambda events: TriggerHandler.trigger_single_key(events, pygame.K_F3),
-                lambda: self.state.startup() if self.state else None,
-            )
+        # Admin state switching (only if admin flag is True)
+        if self.admin:
             self.gi.add_action(
                 "admin_switch_right",
                 lambda events: TriggerHandler.trigger_single_key(
@@ -104,6 +95,17 @@ class BaseGame:
                 lambda events: TriggerHandler.trigger_single_key(events, pygame.K_LEFT),
                 self.sm.previous_state,
             )
+            logger.info("Admin mode enabled: Use LEFT/RIGHT arrows to switch states")
+
+        # screenshots
+        self.screenshots_folder = Path("screenshots")
+
+        # font
+        self.font = pygame.freetype.Font(self.ss.get("game_font_path"))
+
+        # add game to every state
+        for s in self.sm.states:
+            self.add_state(s)
 
     # --- states helper functions ---
     def add_state(self, state: le.State):
@@ -113,6 +115,10 @@ class BaseGame:
     # --- actions ---
     def on_state_change(self, old: le.State, new: le.State):
         logger.debug(f"Switching from [{old.name}] to [{new.name}]")
+
+        # CRITICAL: Stop all sounds when changing states
+        self.sound_manager.cleanup()
+
         self.last_state_tm.reset()
 
     def quit_game(self):
@@ -120,14 +126,11 @@ class BaseGame:
         logger.debug("Quit triggered")
 
     def toggle_fullscreen(self):
-        if self.win_state == WindowStates.FULLSCREEN:
-            return
         if self.wc.is_current_fullscreen_mode():
             self.wc.set_mode(self.win_state)
-            logger.debug("Fullscreen toggled off")
         else:
             self.wc.set_mode(WindowStates.FULLSCREEN)
-            logger.debug("Fullscreen toggled on")
+        logger.debug("Fullscreen toggled")
 
     def take_screenshot(self):
         # make sure screenshots folder exists
@@ -166,49 +169,35 @@ class BaseGame:
     # --- properties ---
     @property
     def screen(self) -> pygame.Surface:
-        "Returns screen."
         return self.wc.get_screen()
 
     @property
     def size(self) -> Tuple[int, int]:
-        "Returns screen size."
         return self.screen.get_size()
 
     @property
     def width(self) -> int:
-        "Returns screen width."
         return self.screen.get_width()
 
     @property
     def height(self) -> int:
-        "Returns screen height."
         return self.screen.get_height()
 
     @property
     def state(self):
-        """Returns current state."""
         return self.sm.state
 
     @property
     def states(self):
-        "Returns all states."
         return self.sm.states
 
     @property
     def time_since_last_state(self):
-        "Returns time (in seconds) since last state change."
         return self.last_state_tm.elapsed_time
 
     # --- util methods ---
     def size_depended(self, base_ratio: float):
         return min(self.width, self.height) / base_ratio
-
-    # --- get event ---
-    def get_event(self, event: pygame.event.Event):
-        if event.type == pygame.QUIT:
-            self.running = False
-        else:
-            self.state.get_event(event)
 
     # --- run ---
     def run(self):
@@ -231,11 +220,16 @@ class BaseGame:
 
                 # event handle
                 for event in events:
-                    self.get_event(event)
+                    if event.type == pygame.QUIT:
+                        self.running = False
+                    else:
+                        self.state.get_event(event)
 
                 # update + draw
                 self.state.update(self.screen, self.tm.dt)
                 self.state.draw(self.screen)
+
+                # TODO: sound
 
                 # update display
                 pygame.display.flip()
@@ -244,6 +238,9 @@ class BaseGame:
             logger.exception(f"An unexpected error occurred in the main loop, {e}")
 
         finally:
+            # Cleanup sounds before quitting
+            self.sound_manager.cleanup()
+
             self.ss.save()
             pygame.quit()
             logger.info("Pygame Ended")

@@ -22,7 +22,7 @@ def main():
 
     # create game
     game = BaseGame(
-        win_state=WindowStates.FULLSCREEN, open_in_fullscreen=True, run_as_admin=True
+        win_state=WindowStates.FULLSCREEN, open_in_fullscreen=True, admin=True
     )
 
     # defines states

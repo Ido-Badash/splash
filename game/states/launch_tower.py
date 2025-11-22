@@ -82,8 +82,12 @@ class LaunchTower(BaseState):
         ]
 
         for r in self.rockets:
-            r.dying_sound = pygame.Sound(self.game.ss.lget("rocket_dying"))
-            r.flying_sound = pygame.Sound(self.game.ss.lget("rocket_flying"))
+            r.dying_sound = pygame.Sound(self.game.ss.lget("rocket_dying_path"))
+            r.flying_sound = pygame.Sound(self.game.ss.lget("rocket_flying_path"))
+            # r.falling_sound = pygame.Sound(self.game.ss.lget("rocket_falling_path"))
+
+        # win sound
+        self.game.sound_manager.load_sound("win", self.game.ss.lget("win_path"))
 
         # track clicks
         self.clicks_count = 0
@@ -95,7 +99,7 @@ class LaunchTower(BaseState):
         self.next_button = Button(
             color=Colors.DARK_GREEN,
             function=self.game.sm.next_state,
-            text="Next Level →",
+            text="Next Level",
             font=self.game.font,
             font_color=Colors.PLATINUM,
             call_on_release=True,
@@ -135,7 +139,7 @@ class LaunchTower(BaseState):
                         self.rocket_stack_logic(rocket)
                         break
 
-        if event.type == pygame.KEYDOWN and self.game.run_as_admin:
+        if event.type == pygame.KEYDOWN and self.game.admin:
             if event.key == pygame.K_d and (event.mod & pygame.KMOD_CTRL):
                 for r in self.rockets:
                     r.done = True
@@ -191,6 +195,8 @@ class LaunchTower(BaseState):
 
     def finish_animation(self, screen: pygame.Surface):
         w, h = screen.get_size()
+
+        self.game.sound_manager.play_sound("win")
 
         # render text
         text_surf, text_rect = self.game.font.render(

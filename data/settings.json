@@ -6,8 +6,10 @@
     "launch_tower_bg_gif_path": "assets/gifs/launch_tower_bg.gif",
     "rocket_image_path": "assets/images/rocket.png",
     "button_click_path": "assets/sound/sfx/button_click.mp3",
-    "rocket_dying": "assets/sound/sfx/rocket_dying.mp3",
-    "rocket_flying": "assets/sound/sfx/rocket_flying.mp3",
+    "rocket_dying_path": "assets/sound/sfx/rocket_dying.mp3",
+    "rocket_flying_path": "assets/sound/sfx/rocket_flying.mp3",
+    "rocket_falling_path": "assets/sound/sfx/rocket_falling.mp3",
+    "win_path": "assets/sound/sfx/win.mp3",
     "can_take_screenshots": true,
     "can_fullscreen": true,
     "can_exit_via_escape": true

@@ -89,6 +89,9 @@ class Rocket:
         self._dying_sound_played = False
         self._falling_sound_played = False
 
+        # stop all sounds
+        self._stop_all_sounds()
+
     def get_event(self, event: pygame.event.Event):
         if self.done:
             return
@@ -175,14 +178,34 @@ class Rocket:
                 self.done = True
                 self._stop_all_sounds()
 
+        # CRITICAL FIX: Apply rotation after physics update
+        self.apply_rotation()
+
     def apply_fall(self, dt: float, screen_h: int):
+        # Update angle for rotation
         self.angle += self.rotation_speed * dt
+
+        # Apply gravity
         self.velocity += self.gravity * dt
         self.rocket_rect.y += self.velocity * dt
 
+        # Check boundaries
         if self.rocket_rect.bottom < 0 or self.rocket_rect.top >= screen_h - 1:
             self.done = True
             self._stop_all_sounds()
+
+    def apply_rotation(self):
+        """Apply the current rotation angle to the sprite"""
+        if self.angle != 0.0:
+            # Rotate the base image
+            rotated = pygame.transform.rotate(self.base_image, self.angle)
+            # Preserve the center position
+            center = self.rocket_rect.center
+            self.rocket = rotated
+            self.rocket_rect = self.rocket.get_rect(center=center)
+        else:
+            # No rotation, use base image
+            self.rocket = self.base_image
 
     def _stop_all_sounds(self):
         if self.flying_sound:

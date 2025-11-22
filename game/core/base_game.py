@@ -84,6 +84,11 @@ class BaseGame:
         # Admin state switching (only if admin flag is True)
         if self.admin:
             self.gi.add_action(
+                "refresh_state",
+                lambda events: TriggerHandler.trigger_single_key(events, pygame.K_F3),
+                lambda: self.state.startup() if self.state else None,
+            )
+            self.gi.add_action(
                 "admin_switch_right",
                 lambda events: TriggerHandler.trigger_single_key(
                     events, pygame.K_RIGHT

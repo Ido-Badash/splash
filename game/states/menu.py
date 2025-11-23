@@ -5,6 +5,7 @@ from game.core import BaseState, logger
 from game.ui import FadeTransition, Colors
 from game.widgets import Button, TextLine
 from .states import States
+from game.utils import resource_path
 
 
 class Menu(BaseState):
@@ -19,12 +20,14 @@ class Menu(BaseState):
         )
 
         # Load background GIF
-        self.bg_gif = gif_pygame.load(self.game.ss.get("menu_bg_gif_path"))
+        self.bg_gif = gif_pygame.load(
+            resource_path(self.game.ss.get("menu_bg_gif_path"))
+        )
         self.bg_gif_surf = None
 
         # Load astronaut image
         self.astronaut_img = pygame.image.load(
-            self.game.ss.get("menu_astronaut_path")
+            resource_path(self.game.ss.get("menu_astronaut_path"))
         ).convert_alpha()
 
         # Astronaut state
@@ -68,7 +71,9 @@ class Menu(BaseState):
             hover_font_color=Colors.WHITE,
             clicked_color=Colors.DISK_RED,
             clicked_font_color=Colors.WHITE,
-            click_sound=pygame.Sound(self.game.ss.get("button_click_path")),
+            click_sound=pygame.Sound(
+                resource_path(self.game.ss.get("button_click_path"))
+            ),
             size_ratio=(0.25, 0.08),
             pos_ratio=(0.5, 0.55),
             screen_size=self.game.size,
@@ -92,7 +97,9 @@ class Menu(BaseState):
             hover_font_color=Colors.WHITE,
             clicked_color=Colors.DARK_CRIMSON,
             clicked_font_color=Colors.WHITE,
-            click_sound=pygame.Sound(self.game.ss.get("button_click_path")),
+            click_sound=pygame.Sound(
+                resource_path(self.game.ss.get("button_click_path"))
+            ),
             size_ratio=(0.25, 0.08),
             pos_ratio=(0.5, 0.68),
             screen_size=self.game.size,
@@ -118,7 +125,7 @@ class Menu(BaseState):
         self._spawn_astronaut()
 
         # Play background music
-        pygame.mixer.music.load(self.game.ss.get("main_music_path"))
+        pygame.mixer.music.load(resource_path(self.game.ss.get("main_music_path")))
         pygame.mixer.music.play(-1, fade_ms=2000)
 
     def cleanup(self):

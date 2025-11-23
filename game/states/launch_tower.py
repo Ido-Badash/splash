@@ -2,7 +2,7 @@ import pygame
 import gif_pygame
 from game.core import BaseState
 from game.ui import FadeTransition, Colors
-from game.utils import mid_pos
+from game.utils import mid_pos, resource_path
 from .states import States
 from game.entities import Rocket
 from game.widgets import TextLine, MultiLine, Button
@@ -19,7 +19,9 @@ class LaunchTower(BaseState):
             ending_alpha=0,
         )
 
-        self.bg_gif = gif_pygame.load(self.game.ss.get("launch_tower_bg_gif_path"))
+        self.bg_gif = gif_pygame.load(
+            resource_path(self.game.ss.get("launch_tower_bg_gif_path"))
+        )
         self.bg_gif_surf = None
 
         # --- MULTILINE TEXT BLOCK ---
@@ -81,12 +83,18 @@ class LaunchTower(BaseState):
         ]
 
         for r in self.rockets:
-            r.dying_sound = pygame.Sound(self.game.ss.get("rocket_dying_path"))
-            r.flying_sound = pygame.Sound(self.game.ss.get("rocket_flying_path"))
+            r.dying_sound = pygame.Sound(
+                resource_path(self.game.ss.get("rocket_dying_path"))
+            )
+            r.flying_sound = pygame.Sound(
+                resource_path(self.game.ss.get("rocket_flying_path"))
+            )
             # r.falling_sound = pygame.Sound(self.game.ss.get("rocket_falling_path"))
 
         # win sound
-        self.game.sound_manager.load_sound("win", self.game.ss.get("win_path"))
+        self.game.sound_manager.load_sound(
+            "win", resource_path(self.game.ss.get("win_path"))
+        )
 
         # track clicks
         self.clicks_count = 0
@@ -107,7 +115,9 @@ class LaunchTower(BaseState):
             hover_font_color=Colors.DARK_GREEN,
             clicked_color=Colors.DARK_GREEN,
             clicked_font_color=Colors.PLATINUM,
-            click_sound=pygame.Sound(self.game.ss.get("button_click_path")),
+            click_sound=pygame.Sound(
+                resource_path(self.game.ss.get("button_click_path"))
+            ),
             size_ratio=(0.15, 0.06),  # 15% width, 6% height of screen
             screen_size=self.game.screen.get_size(),
             border_radius=12,
@@ -128,7 +138,7 @@ class LaunchTower(BaseState):
         self._played_win_sound = False
 
         # play main music
-        pygame.mixer.music.load(self.game.ss.get("main_music_path"))
+        pygame.mixer.music.load(resource_path(self.game.ss.get("main_music_path")))
         pygame.mixer.music.play(-1, fade_ms=2000)
 
     def cleanup(self):

@@ -2,6 +2,7 @@ from typing import Tuple
 import pygame
 import random
 from game.ui import Colors
+from game.utils import resource_path
 
 
 class Rocket:
@@ -44,7 +45,9 @@ class Rocket:
 
         # image
         self.image_path = image_path or "assets/images/rocket.png"
-        self.image_original = pygame.image.load(self.image_path).convert_alpha()
+        self.image_original = pygame.image.load(
+            resource_path(self.image_path)
+        ).convert_alpha()
         self.base_image = self.image_original
         self.rocket = self.base_image
         self.rocket_rect = self.rocket.get_rect()

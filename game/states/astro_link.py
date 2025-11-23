@@ -3,7 +3,7 @@ import gif_pygame
 import math
 from game.core import BaseState, logger
 from game.ui import FadeTransition, Colors
-from game.utils import mid_pos
+from game.utils import mid_pos, resource_path
 from game.widgets import Button, TextLine, MultiLine
 from .states import States
 
@@ -19,20 +19,22 @@ class AstroLink(BaseState):
             speed=100,
         )
 
-        self.bg_gif = gif_pygame.load(self.game.ss.get("astro_link_bg_gif_path"))
+        self.bg_gif = gif_pygame.load(
+            resource_path(self.game.ss.get("astro_link_bg_gif_path"))
+        )
         self.bg_gif_surf = None
 
         # Load images
         self.spacecraft_img_original = pygame.image.load(
-            self.game.ss.get("astro_link_spacecraft_path")
+            resource_path(self.game.ss.get("astro_link_spacecraft_path"))
         ).convert_alpha()
 
         self.satellite_img = pygame.image.load(
-            self.game.ss.get("astro_link_satellite_path")
+            resource_path(self.game.ss.get("astro_link_satellite_path"))
         ).convert_alpha()
 
         self.ground_station_img = pygame.image.load(
-            self.game.ss.get("astro_link_ground_station_path")
+            resource_path(self.game.ss.get("astro_link_ground_station_path"))
         ).convert_alpha()
         self.ground_station_img.set_alpha(200)
 
@@ -85,12 +87,16 @@ class AstroLink(BaseState):
 
         # Load sounds
         self.game.sound_manager.load_sound(
-            "beam_connect", self.game.ss.get("astro_link_beam_sound_path")
+            "beam_connect",
+            resource_path(self.game.ss.get("astro_link_beam_sound_path")),
         )
         self.game.sound_manager.load_sound(
-            "transmission_success", self.game.ss.get("astro_link_success_sound_path")
+            "transmission_success",
+            resource_path(self.game.ss.get("astro_link_success_sound_path")),
         )
-        self.game.sound_manager.load_sound("win", self.game.ss.get("win_path"))
+        self.game.sound_manager.load_sound(
+            "win", resource_path(self.game.ss.get("win_path"))
+        )
 
         # Game state
         self.level_complete = False
@@ -140,7 +146,9 @@ class AstroLink(BaseState):
             hover_font_color=Colors.DARK_GREEN,
             clicked_color=Colors.DARK_GREEN,
             clicked_font_color=Colors.PLATINUM,
-            click_sound=pygame.Sound(self.game.ss.get("button_click_path")),
+            click_sound=pygame.Sound(
+                resource_path(self.game.ss.get("button_click_path"))
+            ),
             size_ratio=(0.15, 0.06),
             screen_size=self.game.size,
             border_radius=12,
@@ -167,7 +175,7 @@ class AstroLink(BaseState):
         self._scale_images()
 
         # Play background music
-        pygame.mixer.music.load(self.game.ss.get("main_music_path"))
+        pygame.mixer.music.load(resource_path(self.game.ss.get("main_music_path")))
         pygame.mixer.music.play(-1, fade_ms=1000)
 
     def cleanup(self):

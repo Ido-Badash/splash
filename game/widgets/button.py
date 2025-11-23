@@ -1,5 +1,6 @@
 import pygame as pg
 import pygame.freetype as ft
+from game.utils import resource_path
 
 
 class Button:

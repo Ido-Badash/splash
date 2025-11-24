@@ -50,7 +50,7 @@ class Credits(BaseState):
 
         lines.append(("LEADING PROGRAM TEACHERS", Colors.ICE_BLUE, True))
         lines.append(("Tanyae Atikin, tanyae@kramim.ort.org.il", Colors.CREAM, False))
-        lines.append(("Keren Geron, kerengeron@gmail.com", Colors.CREAM, False))
+        lines.append(("Keren Raz, kerengeron@gmail.com", Colors.CREAM, False))
         lines.append(("", Colors.CREAM, False))
 
         lines.append(("STUDENTS TEAM", Colors.ICE_BLUE, True))

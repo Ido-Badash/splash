@@ -61,10 +61,10 @@ class LifeSupport(BaseState):
         self.radiation = 0.0  # 0 is safe, 100 is lethal
 
         # Decay/increase rates (per second) - made more challenging
-        self.o2_decay = 2.4
-        self.temp_decay = 1.6
-        self.water_decay = 2.0
-        self.rad_increase = 0.8
+        self.o2_decay = 1.9
+        self.temp_decay = 1.2
+        self.water_decay = 1.5
+        self.rad_increase = 0.6
 
         # --- Button cooldowns (to prevent spam) ---
         self.btn_o2_cooldown = 0.0
@@ -242,6 +242,7 @@ class LifeSupport(BaseState):
         self.btn_temp_cooldown = 0.0
         self.btn_water_cooldown = 0.0
         self.btn_rad_cooldown = 0.0
+        self.cooldown_duration = 3.0
 
         # Load sounds safely (includes "click" now)
         self._load_sounds()
@@ -737,23 +738,28 @@ class LifeSupport(BaseState):
             (self.btn_radshield, self.btn_rad_cooldown),
         ]
 
+        # Check if any button is on cooldown
+        any_cooldown = any(cd > 0 for _, cd in buttons_cooldowns)
+
         for btn, cooldown in buttons_cooldowns:
+            # Draw the button normally
             btn.draw(screen)
 
-            # Cooldown overlay
-            if cooldown > 0:
-                progress = cooldown / self.cooldown_duration
+            if any_cooldown:
+                # Use this button's cooldown to draw overlay (0 if not on cooldown)
+                progress = min(1.0, cooldown / self.cooldown_duration)
                 overlay = pygame.Surface(btn.rect.size, pygame.SRCALPHA)
                 overlay.fill((*Colors.DEEP_SPACE_BLUE, int(180 * progress)))
                 screen.blit(overlay, btn.rect.topleft)
 
-                # Cooldown text
-                cd_text = f"{cooldown:.1f}s"
-                cd_surf, cd_rect = self.game.font.render(
-                    cd_text, Colors.DISK_RED, size=self.game.size_depended(16)
-                )
-                cd_rect.center = btn.rect.center
-                screen.blit(cd_surf, cd_rect)
+                # Draw cooldown text only if this button is actually on cooldown
+                if cooldown > 0:
+                    cd_text = f"{cooldown:.1f}s"
+                    cd_surf, cd_rect = self.game.font.render(
+                        cd_text, Colors.DISK_RED, size=self.game.size_depended(16)
+                    )
+                    cd_rect.center = btn.rect.center
+                    screen.blit(cd_surf, cd_rect)
 
     def _draw_emergency_overlay(self, screen):
         """Draw emergency warning"""
@@ -876,7 +882,7 @@ class LifeSupport(BaseState):
         self.next_button.pos_ratio = (
             text_rect_on_screen.centerx / w,
             (
-                text_rect_on_screen.bottom + text_rect_on_screen.height * 0.6
+                text_rect_on_screen.bottom + text_rect_on_screen.height * 0.7
             )  # 60% down from top
             / h,
         )
@@ -886,7 +892,7 @@ class LifeSupport(BaseState):
 
     # ----------------- Button Actions -----------------
     def _fix_o2(self):
-        if self.btn_o2_cooldown > 0:
+        if not self._can_fix_any():
             return
 
         # play click only when action is allowed
@@ -907,7 +913,7 @@ class LifeSupport(BaseState):
             self._resolve_emergency()
 
     def _fix_temp(self):
-        if self.btn_temp_cooldown > 0:
+        if not self._can_fix_any():
             return
 
         try:
@@ -927,7 +933,7 @@ class LifeSupport(BaseState):
             self._resolve_emergency()
 
     def _fix_water(self):
-        if self.btn_water_cooldown > 0:
+        if not self._can_fix_any():
             return
 
         try:
@@ -947,7 +953,7 @@ class LifeSupport(BaseState):
             self._resolve_emergency()
 
     def _fix_radiation(self):
-        if self.btn_rad_cooldown > 0:
+        if not self._can_fix_any():
             return
 
         try:
@@ -965,6 +971,14 @@ class LifeSupport(BaseState):
 
         if self.emergency and self.emergency["type"] == "radiation":
             self._resolve_emergency()
+
+    def _can_fix_any(self):
+        return (
+            self.btn_o2_cooldown <= 0
+            and self.btn_temp_cooldown <= 0
+            and self.btn_water_cooldown <= 0
+            and self.btn_rad_cooldown <= 0
+        )
 
     # ----------------- Emergency Helpers -----------------
     def _spawn_emergency(self, etype: str):

@@ -17,9 +17,11 @@ def resource_path(relative_path: str) -> str:
     if not relative_path:
         raise ValueError("resource_path received None!")
 
-    # If running from PyInstaller EXE
-    base = getattr(sys, "_MEIPASS", Path(__file__).parent)
+    # Use _MEIPASS if packaged by PyInstaller
+    if hasattr(sys, "_MEIPASS"):
+        base = Path(sys._MEIPASS)
+    else:
+        # Use project root (2 levels up from utils/)
+        base = Path(__file__).resolve().parent.parent.parent
 
-    full = Path(base) / relative_path
-
-    return str(full)
+    return str(base / relative_path)

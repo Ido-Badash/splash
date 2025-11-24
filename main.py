@@ -20,7 +20,7 @@ from game.states import (
     # Credits,
     LaunchTower,
     AstroLink,
-    LifeCapsule,
+    LifeSupport,
     SoftLanding,
 )
 import logging
@@ -47,7 +47,7 @@ def main():
         # Credits(game),
         LaunchTower(game),
         AstroLink(game),
-        LifeCapsule(game),
+        LifeSupport(game),
         SoftLanding(game),
     ]
 

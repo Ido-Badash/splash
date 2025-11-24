@@ -42,6 +42,7 @@ class BaseGame:
 
         # init pygame
         pygame.init()
+        pygame.mixer.init()
         self.clock = pygame.time.Clock()
 
         # time since last state
@@ -109,6 +110,7 @@ class BaseGame:
         self.screenshots_folder = Path("screenshots")
 
         # font
+        print(resource_path("assets/fonts/game_font.ttf"))
         self.font = pygame.freetype.Font(resource_path("assets/fonts/game_font.ttf"))
 
         # add game to every state

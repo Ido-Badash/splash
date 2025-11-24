@@ -7,6 +7,7 @@ class Colors:
     BLUE = (0, 0, 255)
     YELLOW = (255, 255, 0)
     ORANGE = (255, 165, 0)
+    CYAN = (0, 255, 255)
 
     # --- DARKS / DEEP COLORS ---
     DARK_BLUE = (0, 0, 139)
@@ -16,6 +17,18 @@ class Colors:
     DARK_GREEN = (0, 46, 44)
     FOREST_GREEN = (34, 139, 34)
     DARK_PURPLE = (60, 0, 100)
+
+    # --- COLD TECH COLORS ---
+    DEEP_SPACE_BLUE = (15, 20, 45)
+    TECH_PURPLE = (80, 40, 120)
+    CYBER_BLUE = (50, 100, 200)
+    ICE_BLUE = (100, 180, 255)
+    VIOLET_GLOW = (138, 43, 226)
+    DEEP_PURPLE = (48, 25, 80)
+    ELECTRIC_BLUE = (0, 150, 255)
+    FROST_WHITE = (220, 240, 255)
+    CRITICAL_RED = (200, 30, 30)
+    WARNING_AMBER = (255, 150, 0)
 
     # --- GRAYSCALE / METALS ---
     PLATINUM = (234, 230, 229)

@@ -27,6 +27,7 @@ class AstroLink(BaseState):
         self.bg_frame_index = 0
         self.bg_frame_delay = 60  # ms per frame
         self.bg_frame_timer = 0
+
         self.bg_gif_surf = None
 
         # Load images
@@ -286,13 +287,26 @@ class AstroLink(BaseState):
                 self._trigger_win()
 
     def update(self, screen, dt):
-        # bg gif
+        # If GIF delay accidentally left large, reduce to reasonable frame interval:
+        if hasattr(self, "bg_frame_delay") and self.bg_frame_delay > 1.0:
+            # likely value from earlier bug — use ~120ms per frame
+            self.bg_frame_delay = 0.12
+
+        # Background GIF (dt is seconds)
         self.bg_frame_timer += dt
         if self.bg_frame_timer >= self.bg_frame_delay:
-            self.bg_frame_timer = 0
-            self.bg_frame_index = (self.bg_frame_index + 1) % len(self.bg_gif)
-        bg_frame = self.bg_gif[self.bg_frame_index]
-        self.bg_gif_surf = pygame.transform.scale(bg_frame, self.game.size)
+            self.bg_frame_timer = 0.0
+            # protect against empty gif frames
+            if self.bg_gif:
+                self.bg_frame_index = (self.bg_frame_index + 1) % len(self.bg_gif)
+        if self.bg_gif:
+            bg_frame = self.bg_gif[self.bg_frame_index]
+            # scale each frame to screen size
+            try:
+                self.bg_gif_surf = pygame.transform.scale(bg_frame, self.game.size)
+            except Exception:
+                # fallback: if frame isn't a surface, ignore
+                self.bg_gif_surf = None
 
         # text block
         self.text_block.update(self.game.size)

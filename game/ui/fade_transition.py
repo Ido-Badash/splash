@@ -11,7 +11,7 @@ class FadeTransition:
         starting_alpha: int = 0,
         ending_alpha: int = 255,
         pos: Tuple[int, int] = (0, 0),
-        speed: int = 150,
+        speed: int = 100,
     ):
         self.size = size
         self.color = color

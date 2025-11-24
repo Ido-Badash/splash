@@ -8,6 +8,6 @@ class States(str, Enum):
     CREDITS = "Credits"
     LAUNCH_TOWER = "Launch Tower"
     ORBIT_CONTROL = "Orbit Control"
-    LIFE_CAPSULE = "Life Capsule"
+    LIFE_SUPPORT = "Life Support"
     ASTRO_LINK = "Astro Link"
     SOFT_LANDING = "Soft Landing"

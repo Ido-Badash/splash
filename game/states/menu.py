@@ -19,10 +19,6 @@ class Menu(BaseState):
         )
 
         # Load background GIF
-        print("----------------------------------------")
-        print(resource_path("assets/gifs/menu_bg_gif.gif"))
-        print(resource_path("assets/images/astronaut.png"))
-        print("----------------------------------------")
         gif_path = resource_path("assets/gifs/menu_bg_gif.gif")
 
         with open(gif_path, "rb") as f:

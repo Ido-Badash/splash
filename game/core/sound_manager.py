@@ -36,7 +36,11 @@ class SoundManager:
         return self.sounds[name]
 
     def play_sound(
-        self, name: str, loops: int = 0, fade_ms: int = 0
+        self,
+        name: str,
+        loops: int = 0,
+        fade_ms: int = 0,
+        volume: Optional[float] = None,
     ) -> Optional[pygame.mixer.Channel]:
         """Play a sound effect, stopping previous instance if needed."""
         if name in self.sounds:
@@ -44,7 +48,14 @@ class SoundManager:
             if name in self.channels and self.channels[name]:
                 self.channels[name].stop()
 
-            channel = self.sounds[name].play(loops=loops, fade_ms=fade_ms)
+            sound = self.sounds[name]
+            # apply per-play volume if specified
+            if volume is not None:
+                sound.set_volume(max(0.0, min(1.0, volume)))
+            else:
+                sound.set_volume(self.sound_volume)
+
+            channel = sound.play(loops=loops, fade_ms=fade_ms)
             self.channels[name] = channel
             return channel
         return None

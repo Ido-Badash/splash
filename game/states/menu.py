@@ -179,7 +179,7 @@ class Menu(BaseState):
 
     def _start_game(self):
         logger.info("Menu: Starting game")
-        self.game.sm.set_state(States.LAUNCH_TOWER)
+        self.game.sm.set_state(States.SPACE_QUIZ)
 
     def _show_credits(self):
         logger.info("Menu: Showing Credits")

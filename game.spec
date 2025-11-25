@@ -39,7 +39,7 @@ exe = EXE(
     [],
 
     # Name of your .exe
-    name='space_olympics_english',
+    name='space_olympics_hebrew',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

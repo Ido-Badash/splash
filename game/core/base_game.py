@@ -110,8 +110,9 @@ class BaseGame:
         self.screenshots_folder = Path("screenshots")
 
         # font
-        print(resource_path("assets/fonts/game_font.ttf"))
-        self.font = pygame.freetype.Font(resource_path("assets/fonts/game_font.ttf"))
+        self.font = pygame.freetype.Font(
+            resource_path("assets/fonts/game_font_hebrew.ttf")
+        )
 
         # add game to every state
         for s in self.sm.states:

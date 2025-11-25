@@ -12,6 +12,7 @@ def safe_version(package_name):
 
 importlib.metadata.version = safe_version
 from game.ui import Colors
+from game.utils import heb
 from game.core import BaseGame, logger
 from game.states import (
     States,
@@ -41,7 +42,10 @@ def main():
     # defines states
     states = [
         SplashScreen(
-            game, next_state=States.MENU, text="Ort Kramim", bg_color=Colors.KHAKI_PLAT
+            game,
+            next_state=States.MENU,
+            text=heb("אורט כרמים"),
+            bg_color=Colors.KHAKI_PLAT,
         ),
         Menu(game),
         SpaceQuiz(game),

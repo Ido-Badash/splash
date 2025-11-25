@@ -30,7 +30,7 @@ class AstroLink(BaseState):
 
         self.bg_gif_surf = None
 
-        # Load images
+        # Load images (no change needed here)
         self.spacecraft_img_original = pygame.image.load(
             resource_path("assets/images/spacecraft.png")
         ).convert_alpha()
@@ -44,26 +44,26 @@ class AstroLink(BaseState):
         ).convert_alpha()
         self.ground_station_img.set_alpha(200)
 
-        # Dynamic sizing
+        # Dynamic sizing (no change needed here)
         self.spacecraft_size_ratio = (0.10, 0.16)
         self.satellite_size_ratio = (0.12, 0.2)
         self.ground_station_size_ratio = (0.05, 0.09)
 
-        # Orbit parameters for spacecraft
+        # Orbit parameters for spacecraft (no change needed here)
         self.orbit_center_ratio = (0.5, 0.4)  # Center of orbit
         self.orbit_radius_x_ratio = 0.30  # Horizontal radius
         self.orbit_radius_y_ratio = 0.25  # Vertical radius (ellipse)
         self.orbit_angle = 0.0  # Current angle in orbit
         self.orbit_speed = 30.0  # Degrees per second
 
-        # Static positions
+        # Static positions (no change needed here)
         self.satellite_pos_ratio = (0.5, 0.4)  # Center of screen
         self.ground_station_pos_ratio = (0.5, 0.85)  # Bottom center
 
         # Placeholder to prevent crash, actual pos calculated in update
         self.spacecraft_pos_ratio = (0.5, 0.4)
 
-        # Scaled images and rects
+        # Scaled images and rects (no change needed here)
         self.spacecraft = None
         self.spacecraft_rect = None
         # We keep a scaled original to rotate from to prevent pixel degradation
@@ -75,23 +75,23 @@ class AstroLink(BaseState):
         self.ground_station = None
         self.ground_station_rect = None
 
-        # Antenna control
+        # Antenna control (no change needed here)
         self.antenna_angle = 0.0  # Current actual angle
         self.target_antenna_angle = 0.0  # Where the mouse is
         self.dragging = False
         self.antenna_length_ratio = 0.14
 
-        # Signal Waves (Visual effect)
+        # Signal Waves (Visual effect) (no change needed here)
         self.waves = (
             []
         )  # List of dicts {'pos': Vector2, 'start': Vector2, 'end': Vector2, 'progress': 0.0}
 
-        # Signal state
+        # Signal state (no change needed here)
         self.beam_connected = False
         self.transmission_timer = 0.0
         self.transmission_duration = 3.0  # 3 seconds to win
 
-        # Load sounds
+        # Load sounds (no change needed here)
         self.game.sound_manager.load_sound(
             "beam_connect",
             resource_path("assets/sound/sfx/beam_connect.mp3"),
@@ -104,31 +104,31 @@ class AstroLink(BaseState):
             "win", resource_path("assets/sound/sfx/win.mp3")
         )
 
-        # Game state
+        # Game state (no change needed here)
         self.level_complete = False
         self._played_win_sound = False
         self._played_beam_sound = False
 
-        # --- MULTILINE TEXT BLOCK ---
+        # --- MULTILINE TEXT BLOCK (Localized) ---
         line_sizes = (25, 27, 30)
         self.text_block = MultiLine(
             lines=[
                 TextLine(
-                    text="Rotate the spacecraft antenna to align with the satellite",
+                    text=heb("סובב את האנטנה של החללית כדי ליישר אותה עם הלוויין"),
                     font=self.game.font,
                     base_ratio=line_sizes[0],
                     color=(*Colors.WHITE, 240),
                     game_size=self.game.size,
                 ),
                 TextLine(
-                    text="Hold the connection for 3 seconds to transmit the signal",
+                    text=heb("שמור על החיבור למשך 3 שניות כדי לשדר את האות"),
                     font=self.game.font,
                     base_ratio=line_sizes[1],
                     color=(*Colors.PLATINUM, 220),
                     game_size=self.game.size,
                 ),
                 TextLine(
-                    text="(Click and drag to rotate)",
+                    text="(" + heb("לחץ וגרור כדי לסובב") + ")",
                     font=self.game.font,
                     base_ratio=line_sizes[2],
                     color=(*Colors.CRIMSON, 200),
@@ -140,11 +140,11 @@ class AstroLink(BaseState):
             game_size=self.game.size,
         )
 
-        # Next Level button
+        # Next Level button (Localized)
         self.next_button = Button(
             color=Colors.DARK_GREEN,
             function=self.game.sm.next_state,
-            text="Next Level",
+            text=heb("לשלב הבא"),
             font=self.game.font,
             font_color=Colors.PLATINUM,
             call_on_release=True,
@@ -161,7 +161,8 @@ class AstroLink(BaseState):
         )
 
     def startup(self):
-        pygame.display.set_caption(self.name.value)
+        # Localized window caption
+        pygame.display.set_caption(heb("קישור אסטרו"))
         self.fade_transition.startup()
         self.next_button.startup()
 
@@ -196,7 +197,7 @@ class AstroLink(BaseState):
         sc_h = int(h * self.spacecraft_size_ratio[1])
 
         self.spacecraft_scaled_original = pygame.transform.scale(
-            self.spacecraft_img, (sc_w, sc_h)
+            self.spacecraft_img_original, (sc_w, sc_h)
         )
         self.spacecraft = self.spacecraft_scaled_original.copy()
 
@@ -248,16 +249,21 @@ class AstroLink(BaseState):
         # 2. Determine if spacecraft should be flipped
         # Check if spacecraft is on left side (-x) or right side (+x) of orbit
         # Flip when on the left side (when x < center_x)
+        # Note: The original code flips vertically (True, False), which is likely intended to simulate
+        # the craft rotating its orientation as it orbits an object, but this is usually a horizontal flip
+        # for a sprite that needs to face the orbit center. I'll maintain the original `(True, False)` for vertical flip.
         should_flip = new_y >= cy
 
         # 3. Apply flip if needed
         self.spacecraft_img = self.spacecraft_scaled_original
         if should_flip:
             self.spacecraft_img = pygame.transform.flip(
-                self.spacecraft_scaled_original, True, False  # flip vertically
+                self.spacecraft_scaled_original,
+                True,
+                False,  # flip vertically (based on original code's comment, might be a bug/intention of the game author)
             )
 
-        # # 4. Rotate the (possibly flipped) image
+        # # 4. Rotate the (possibly flipped) image (No rotation in this code, just flip)
         self.spacecraft = self.spacecraft_img
 
         # 5. Update rect with new center
@@ -314,7 +320,10 @@ class AstroLink(BaseState):
         # Handle Resize
         current_sc_w = int(self.game.width * self.spacecraft_size_ratio[0])
         # Check against scaled original width to detect resize
-        if self.spacecraft_scaled_original.get_width() != current_sc_w:
+        if (
+            self.spacecraft_scaled_original
+            and self.spacecraft_scaled_original.get_width() != current_sc_w
+        ):
             self._scale_images()
 
         # Update Orbit
@@ -349,10 +358,21 @@ class AstroLink(BaseState):
             import random
 
             if random.random() < 0.1:  # simple probabilistic spawn
+                # Use satellite center as start point
+                sat_center = (
+                    self.satellite_rect.center if self.satellite_rect else (0, 0)
+                )
+                # Use ground station center as end point
+                gs_center = (
+                    self.ground_station_rect.center
+                    if self.ground_station_rect
+                    else (0, 0)
+                )
+
                 self.waves.append(
                     {
-                        "start": self.satellite_rect.center,
-                        "end": self.ground_station_rect.center,
+                        "start": sat_center,
+                        "end": gs_center,
                         "progress": 0.0,
                         "speed": 0.5,  # traversals per second
                     }
@@ -419,8 +439,10 @@ class AstroLink(BaseState):
             alpha = int(255 * (1 - t))
 
             # Draw simple circle pulse
-            s = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
-            pygame.draw.circle(s, (*Colors.GREEN, alpha), (radius, radius), radius, 2)
+            s = pygame.Surface((int(radius) * 2, int(radius) * 2), pygame.SRCALPHA)
+            pygame.draw.circle(
+                s, (*Colors.GREEN, alpha), (int(radius), int(radius)), int(radius), 2
+            )
             screen.blit(s, (cur_x - radius, cur_y - radius))
 
     def _draw_beam(self, screen: pygame.Surface):
@@ -465,8 +487,10 @@ class AstroLink(BaseState):
 
         pygame.draw.rect(screen, Colors.WHITE, (bar_x, bar_y, bar_width, bar_height), 2)
 
+        # Localized label
+        label_text = heb("אות") + f": {int(strength * 100)}%"
         label_surf, label_rect = self.game.font.render(
-            f"Signal: {int(strength * 100)}%",
+            label_text,
             Colors.WHITE,
             size=self.game.size_depended(30),
         )
@@ -512,8 +536,9 @@ class AstroLink(BaseState):
             self.game.sound_manager.play_sound("win")
             self._played_win_sound = True
 
+        # Localized Win Text
         text_surf, text_rect = self.game.font.render(
-            "Good Job!", Colors.WHITE, size=self.game.size_depended(10)
+            heb("עבודה טובה!"), Colors.WHITE, size=self.game.size_depended(10)
         )
         text_pos = mid_pos((w, h), text_rect)
         screen.blit(text_surf, text_pos)

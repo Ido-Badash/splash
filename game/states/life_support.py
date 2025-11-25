@@ -3,7 +3,7 @@ import random
 import math
 from game.core import BaseState, logger
 from game.ui import FadeTransition, Colors
-from game.utils import resource_path, load_gif_from_bytes, mid_pos
+from game.utils import resource_path, load_gif_from_bytes, heb
 from .states import States
 from game.widgets import Button, TextLine, MultiLine
 
@@ -103,7 +103,7 @@ class LifeSupport(BaseState):
             color=Colors.CYBER_BLUE,
             hover_color=Colors.DARK_BLUE,
             function=self._fix_o2,
-            text="O2 Filter",
+            text="O2" + " " + heb("פילטר"),
             font=self.game.font,
             font_color=Colors.FROST_WHITE,
             call_on_release=True,
@@ -116,7 +116,7 @@ class LifeSupport(BaseState):
             color=Colors.VIOLET_GLOW,
             hover_color=Colors.TECH_PURPLE,
             function=self._fix_temp,
-            text="Temp Adj",
+            text=heb("התאם טמפ'"),
             font=self.game.font,
             font_color=Colors.FROST_WHITE,
             call_on_release=True,
@@ -129,7 +129,7 @@ class LifeSupport(BaseState):
             color=Colors.ICE_BLUE,
             hover_color=Colors.CYBER_BLUE,
             function=self._fix_water,
-            text="H2O Recycle",
+            text="H2O" + heb("מיחזור"),
             font=self.game.font,
             font_color=Colors.DEEP_SPACE_BLUE,
             call_on_release=True,
@@ -142,7 +142,7 @@ class LifeSupport(BaseState):
             color=Colors.TECH_PURPLE,
             hover_color=Colors.DARK_PURPLE,
             function=self._fix_radiation,
-            text="Rad Shield",
+            text=heb("מגן קרינה"),
             font=self.game.font,
             font_color=Colors.FROST_WHITE,
             call_on_release=True,
@@ -155,7 +155,7 @@ class LifeSupport(BaseState):
         self.next_button = Button(
             color=Colors.DARK_GREEN,
             function=self.game.sm.next_state,
-            text="Next Level",
+            text=heb("תודה ששיחקתם!"),
             font=self.game.font,
             font_color=Colors.PLATINUM,
             call_on_release=True,
@@ -176,14 +176,18 @@ class LifeSupport(BaseState):
         self.text_block = MultiLine(
             lines=[
                 TextLine(
-                    text="LIFE SUPPORT SYSTEMS",
+                    text=heb("מערכות תמיכה בחיים"),
                     font=self.game.font,
                     base_ratio=line_sizes[0],
                     color=Colors.ELECTRIC_BLUE,
                     game_size=self.game.size,
                 ),
                 TextLine(
-                    text=f"Maintain critical systems for {self.win_duration} seconds",
+                    text=heb(f"תחזוק מערכות קריטיות עבור")
+                    + " "
+                    + str(self.win_duration)
+                    + " "
+                    + heb("שניות"),
                     font=self.game.font,
                     base_ratio=line_sizes[1],
                     color=Colors.ICE_BLUE,
@@ -784,32 +788,25 @@ class LifeSupport(BaseState):
         etype = self.emergency["type"].upper().replace("RADIATION", "RAD")
         time_left = self.emergency["time_to_fail"] - self.emergency["timer"]
 
-        title = f"! {etype} EMERGENCY !"
-        subtitle = f"Resolve in {int(time_left)}s or fail!"
+        title = f"! {etype} " + heb("חרום") + " !"
 
         title_surf, title_rect = self.game.font.render(
             title, Colors.CRITICAL_RED, size=self.game.size_depended(28)
         )
-        sub_surf, sub_rect = self.game.font.render(
-            subtitle, Colors.WARNING_AMBER, size=self.game.size_depended(20)
-        )
-
         title_rect.center = (w // 2, int(h * 0.85))
-        sub_rect.center = (w // 2, int(h * 0.90))
 
         # Background for text
         bg_rect = pygame.Rect(
             title_rect.left - 20,
             title_rect.top - 10,
-            max(title_rect.width, sub_rect.width) + 40,
-            sub_rect.bottom - title_rect.top + 20,
+            title_rect.width + 40,
+            title_rect.height + 20,
         )
         bg_surf = pygame.Surface(bg_rect.size, pygame.SRCALPHA)
         bg_surf.fill((*Colors.DEEP_SPACE_BLUE, 200))
         screen.blit(bg_surf, bg_rect.topleft)
 
         screen.blit(title_surf, title_rect)
-        screen.blit(sub_surf, sub_rect)
 
     def _draw_fail_ui(self, screen):
         """Draw failure screen + restart hint"""
@@ -825,21 +822,23 @@ class LifeSupport(BaseState):
 
         # Title
         title_surf, title_rect = self.game.font.render(
-            "SYSTEMS FAILURE", Colors.CRITICAL_RED, size=self.game.size_depended(8)
+            heb("כשל מערכות"), Colors.CRITICAL_RED, size=self.game.size_depended(8)
         )
         title_rect.center = (w // 2, int(h * title_ratio))
         screen.blit(title_surf, title_rect)
 
         # Subtext
         sub_surf, sub_rect = self.game.font.render(
-            "Mission Failed", Colors.ICE_BLUE, size=self.game.size_depended(18)
+            heb("המשימה נכשלה"), Colors.ICE_BLUE, size=self.game.size_depended(18)
         )
         sub_rect.center = (w // 2, int(h * sub_ratio))
         screen.blit(sub_surf, sub_rect)
 
         # Hint
         hint_surf, hint_rect = self.game.font.render(
-            "Press R to restart", Colors.WARNING_AMBER, size=self.game.size_depended(14)
+            heb("הקש R כדי להפעיל מחדש"),
+            Colors.WARNING_AMBER,
+            size=self.game.size_depended(14),
         )
         hint_rect.center = (w // 2, int(h * hint_ratio))
         screen.blit(hint_surf, hint_rect)
@@ -863,14 +862,14 @@ class LifeSupport(BaseState):
 
         # Title text
         title_surf, title_rect = self.game.font.render(
-            "SYSTEMS STABLE", Colors.ELECTRIC_BLUE, size=self.game.size_depended(8)
+            heb("מערכות יציבות"), Colors.ELECTRIC_BLUE, size=self.game.size_depended(8)
         )
         title_rect.center = (w // 2, int(h * 0.4))  # 40% down from top
         screen.blit(title_surf, title_rect)
 
         # Subtitle text
         sub_surf, sub_rect = self.game.font.render(
-            "Mission Complete!", Colors.ICE_BLUE, size=self.game.size_depended(18)
+            heb("המשימה הושלמה!"), Colors.ICE_BLUE, size=self.game.size_depended(18)
         )
         sub_rect.center = (w // 2, int(h * 0.5))  # 50% down from top
         screen.blit(sub_surf, sub_rect)

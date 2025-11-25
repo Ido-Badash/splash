@@ -30,26 +30,28 @@ class LaunchTower(BaseState):
 
         self.bg_gif_surf = None
 
-        # --- MULTILINE TEXT BLOCK ---
+        # --- MULTILINE TEXT BLOCK (Localized) ---
         line_sizes = (25, 27, 30)
         self.text_block = MultiLine(
             lines=[
                 TextLine(
-                    text="Artemis wants to test out some rockets",
+                    text=heb("ארטמיס רוצה לבדוק כמה רקטות"),
                     font=self.game.font,
                     base_ratio=line_sizes[0],
                     color=(*Colors.WHITE, 240),
                     game_size=self.game.size,
                 ),
                 TextLine(
-                    text="Help them find the strongest rocket so they can fly to the moon.",
+                    text=heb(
+                        "עזרו להם למצוא את הרקטה החזקה ביותר כדי שיוכלו לטוס לירח."
+                    ),
                     font=self.game.font,
                     base_ratio=line_sizes[1],
                     color=(*Colors.PLATINUM, 220),
                     game_size=self.game.size,
                 ),
                 TextLine(
-                    text="(Click a rocket to launch)",
+                    text="(" + heb("לחץ על רקטה כדי לשגר") + ")",
                     font=self.game.font,
                     base_ratio=line_sizes[2],
                     color=(*Colors.CRIMSON, 200),
@@ -108,11 +110,11 @@ class LaunchTower(BaseState):
         self.start_finish = False
         self._played_win_sound = False
 
-        # --- next button ---
+        # --- next button (Localized) ---
         self.next_button = Button(
             color=Colors.DARK_GREEN,
             function=self.game.sm.next_state,
-            text="Next Level",
+            text=heb("לשלב הבא"),
             font=self.game.font,
             font_color=Colors.PLATINUM,
             call_on_release=True,
@@ -129,7 +131,8 @@ class LaunchTower(BaseState):
         )
 
     def startup(self):
-        pygame.display.set_caption(self.name.value)
+        # Localized window caption
+        pygame.display.set_caption(heb("מגדל שיגור"))
         self.fade_transition.startup()
         self.next_button.startup()
 
@@ -240,9 +243,9 @@ class LaunchTower(BaseState):
             self.game.sound_manager.play_sound("win")
             self._played_win_sound = True
 
-        # render text
+        # render text (Localized)
         text_surf, text_rect = self.game.font.render(
-            "Good Job!", Colors.WHITE, size=self.game.size_depended(10)
+            heb("עבודה טובה!"), Colors.WHITE, size=self.game.size_depended(10)
         )
 
         # calculate text actual pos on screen

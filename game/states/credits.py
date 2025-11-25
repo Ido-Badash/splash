@@ -1,7 +1,7 @@
 import pygame
 import pygame.freetype
 from game.core import BaseState
-from game.utils import resource_path
+from game.utils import resource_path, heb
 from game.ui import Colors
 from .states import States
 
@@ -32,35 +32,53 @@ class Credits(BaseState):
     def _create_credits_text(self):
         lines = []
         # --- Content Definition ---
-        lines.append(("DEVELOPER", Colors.ICE_BLUE, True))
-        lines.append(("Ido Badash, idoba12012011@gmail.com", Colors.CREAM, False))
+
+        # Developer
+        lines.append((heb("מפתח"), Colors.ICE_BLUE, True))
+        # Hebrew name + English Email
+        lines.append(
+            (heb("עידו בדש") + ", idoba12012011@gmail.com", Colors.CREAM, False)
+        )
         lines.append(("", Colors.CREAM, False))
 
-        lines.append(("SCHOOL", Colors.ICE_BLUE, True))
-        lines.append(("Ort Kramim Karmiel", Colors.CREAM, False))
+        # School
+        lines.append((heb("בית ספר"), Colors.ICE_BLUE, True))
+        lines.append((heb("אורט כרמים כרמיאל"), Colors.CREAM, False))
         lines.append(("", Colors.CREAM, False))
 
-        lines.append(("YEAR", Colors.ICE_BLUE, True))
-        lines.append(("2025", Colors.CREAM, False))
+        # Year
+        lines.append((heb("שנה"), Colors.ICE_BLUE, True))
+        lines.append(
+            ("2025", Colors.CREAM, False)
+        )  # Numbers usually don't need reversal
         lines.append(("", Colors.CREAM, False))
 
-        lines.append(("PROGRAM", Colors.ICE_BLUE, True))
-        lines.append(("Space Olympics", Colors.CREAM, False))
+        # Program
+        lines.append((heb("תוכנית"), Colors.ICE_BLUE, True))
+        lines.append((heb("אולימפיאדת החלל"), Colors.CREAM, False))
         lines.append(("", Colors.CREAM, False))
 
-        lines.append(("LEADING PROGRAM TEACHERS", Colors.ICE_BLUE, True))
-        lines.append(("Tanyae Atikin, tanyae@kramim.ort.org.il", Colors.CREAM, False))
-        lines.append(("Keren Raz, kerenr@kramim.ort.org.il", Colors.CREAM, False))
+        # Teachers
+        lines.append((heb("מורים מובילים"), Colors.ICE_BLUE, True))
+        lines.append(
+            (heb("טניה איקין") + ", tanyae@kramim.ort.org.il", Colors.CREAM, False)
+        )
+        lines.append(
+            (heb("קרן רז") + ", kerenr@kramim.ort.org.il", Colors.CREAM, False)
+        )
         lines.append(("", Colors.CREAM, False))
 
-        lines.append(("STUDENTS TEAM", Colors.ICE_BLUE, True))
-        lines.append(("Ido, Linor, Dan, Dafni, Maya", Colors.CREAM, False))
+        # Students
+        lines.append((heb("צוות תלמידים"), Colors.ICE_BLUE, True))
+        lines.append((heb("עידו, לינור, דן, דפני, מאיה"), Colors.CREAM, False))
         lines.append(("", Colors.CREAM, False))
 
-        lines.append(("RESEARCHERS / CONTRIBUTORS", Colors.ICE_BLUE, True))
-        lines.append(("Linor, Dan, Dafni, Maya", Colors.CREAM, False))
+        # Researchers
+        lines.append((heb("חוקרים / תורמים"), Colors.ICE_BLUE, True))
+        lines.append((heb("לינור, דן, דפני, מאיה"), Colors.CREAM, False))
         lines.append(("", Colors.CREAM, False))
 
+        # Github (Keep title in English to match URL, or heb("גיטהאב"))
         lines.append(("GITHUB", Colors.ICE_BLUE, True))
         lines.append(
             (
@@ -91,7 +109,7 @@ class Credits(BaseState):
         self.total_content_height = current_rel_y
 
     def startup(self):
-        pygame.display.set_caption("Credits")
+        pygame.display.set_caption(heb("קרדיטים"))
         self.scroll_y = float(self.game.height)
 
         # Reset exit state

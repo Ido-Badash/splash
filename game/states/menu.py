@@ -43,7 +43,7 @@ class Menu(BaseState):
 
         # Title text
         self.title = TextLine(
-            text="SPACE OLYMPICS",
+            text=heb("אולימפיאדת החלל"),
             font=self.game.font,
             base_ratio=8,
             color=(*Colors.DISK_ORANGE, 255),
@@ -53,7 +53,7 @@ class Menu(BaseState):
 
         # Subtitle text
         self.subtitle = TextLine(
-            text="Test Your Space Skills",
+            text=heb("בדוק את כישורי החלל שלך"),
             font=self.game.font,
             base_ratio=20,
             color=(*Colors.HOLO_YELLOW, 200),
@@ -68,7 +68,7 @@ class Menu(BaseState):
         self.start_button = Button(
             color=Colors.DARK_CRIMSON,
             function=self._start_game,
-            text="START",
+            text=heb("התחל"),
             font=self.game.font,
             font_size=50,
             font_color=Colors.CREAM,
@@ -95,7 +95,7 @@ class Menu(BaseState):
         self.credits_button = Button(
             color=Colors.DARK_CRIMSON,
             function=self._show_credits,
-            text="CREDITS",
+            text=heb("קרדיטים"),
             font=self.game.font,
             font_size=50,
             font_color=Colors.WHITE,
@@ -120,7 +120,7 @@ class Menu(BaseState):
         self.exit_button = Button(
             color=Colors.VOID_RED,
             function=self._exit_game,
-            text="EXIT",
+            text=heb("יציאה"),
             font=self.game.font,
             font_size=50,
             font_color=Colors.HOLO_YELLOW,
@@ -227,7 +227,7 @@ class Menu(BaseState):
         )
         title_size = int(self.game.size_depended(8) * pulse_scale)
         title_surf, title_rect = self.game.font.render(
-            "SPACE OLYMPICS", Colors.WHITE, size=title_size
+            heb("אולימפיאדת החלל"), Colors.WHITE, size=title_size
         )
         title_rect.centerx = self.game.width // 2
         title_rect.centery = int(self.game.height * 0.25)
